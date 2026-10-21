@@ -1,0 +1,50 @@
+# Copy to config.toml. Relative paths resolve beside that file.
+[slack]
+# Use "env:SLACK_USER_TOKEN" or paste a user OAuth token (xoxp-...).
+token = "env:SLACK_USER_TOKEN"
+joined_public = true
+private_channels = true
+direct_messages = false
+group_messages = false
+unjoined_public = false
+initial_lookback_hours = 24
+thread_tracking_days = 30
+timeout_seconds = 30
+retries = 3
+max_retry_after_seconds = 120
+
+[ai]
+provider = "ollama" # or "claude_code"
+chunk_characters = 24000
+timeout_seconds = 180
+retries = 1
+top_items = 5
+
+[ollama]
+base_url = "http://127.0.0.1:11434"
+# Set to a model already installed in Ollama (see `ollama list`).
+model = ""
+
+[claude_code]
+executable = "claude"
+model = "sonnet"
+
+[storage]
+database = "data/rundown.sqlite3"
+summaries_dir = "summaries"
+timezone = "America/Edmonton"
+
+[keywords]
+urgent = 5
+blocker = 5
+incident = 5
+outage = 5
+"action required" = 4
+deadline = 4
+security = 4
+customer = 3
+decision = 3
+review = 2
+help = 2
+todo = 2
+

@@ -1,0 +1,5 @@
+{
+  "display_information": {"name": "Rundown", "description": "Personal channel digests on your computer", "background_color": "#165c50"},
+  "oauth_config": {"scopes": {"user": ["channels:read", "channels:history", "groups:read", "groups:history", "users:read"]}},
+  "settings": {"org_deploy_enabled": false, "socket_mode_enabled": false, "token_rotation_enabled": false}
+}

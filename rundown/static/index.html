@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rundown</title>
+  <script src="/static/theme.js"></script>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/demo.js" defer></script>
+  <script src="/static/app.js" defer></script>
+  <script src="/static/settings.js" defer></script>
+</head>
+<body>
+  <header class="masthead"><a class="brand" href="/" aria-label="Rundown home"><span class="brand-mark">r.</span>rundown</a><div class="header-actions"><button id="theme-toggle" class="settings-button" type="button" aria-label="Toggle dark mode" aria-pressed="false">Dark mode</button><button id="dev-toggle" class="dev-toggle" type="button" aria-label="Enable developer preview" aria-pressed="false" title="Developer preview" disabled>&lt;/&gt;</button><button id="settings-open" class="settings-button" hidden>Settings</button></div></header>
+  <main id="loading-screen"><p class="loading-message" id="loading-message" role="status">Loading…</p></main>
+  <main id="settings-screen" hidden>
+    <section class="setup-intro"><h1 id="setup-title" tabindex="-1">Setup</h1></section>
+    <form id="settings-form" novalidate>
+      <section class="setup-card" aria-labelledby="slack-heading"><div class="step-heading"><div><h2 id="slack-heading">Slack</h2></div></div>
+        <p id="slack-check" class="connection-state" role="status" data-state="idle">○ Slack · not checked</p>
+        <label class="field-label" for="cfg-token">Slack user token</label><div class="secret-input"><input id="cfg-token" class="wide-input" type="password" autocomplete="off" spellcheck="false" placeholder="xoxp-…" aria-describedby="token-help" required><button type="button" id="token-reveal" class="reveal-button" aria-label="Show Slack token" aria-pressed="false" aria-controls="cfg-token" title="Show token"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m3 3 18 18" hidden/></svg></button></div><p class="field-help" id="token-help">Your token is saved only in your local config file. You can also enter env:SLACK_USER_TOKEN.</p>
+        <details class="setup-help"><summary>Where do I get a Slack token?</summary><p>Create an app at <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer">Slack app management ↗</a> using the supplied <a href="/static/slack-manifest.json" download>app manifest</a>, install it to your workspace, and copy the User OAuth Token under OAuth &amp; Permissions. Your workspace may require admin approval.</p></details>
+        <div class="field-label spaced-label">Include conversations</div><div id="conversation-options" class="checkbox-grid"></div><p class="field-help">Direct messages also need im:read / im:history; group DMs need mpim:read / mpim:history. Reinstall your Slack app after adding scopes.</p>
+      </section>
+      <section class="setup-card" aria-labelledby="ai-heading"><div class="step-heading"><div><h2 id="ai-heading">AI provider</h2></div></div>
+        <p id="provider-check" class="connection-state" role="status" data-state="idle">○ AI provider · not checked</p>
+        <label class="field-label" for="cfg-provider">AI provider</label><select id="cfg-provider" class="wide-input"><option value="ollama">Ollama · local on your computer</option><option value="claude_code">Claude Code · use your existing login</option></select>
+        <div id="ollama-fields" class="form-grid provider-fields"><div><label class="field-label" for="cfg-ollama-url">Ollama address</label><input id="cfg-ollama-url" type="url" class="wide-input" required></div><div><label class="field-label" for="cfg-ollama-model">Model name</label><input id="cfg-ollama-model" class="wide-input" placeholder="A model from ollama list" required></div></div>
+        <div id="claude-fields" class="form-grid provider-fields" hidden><div><label class="field-label" for="cfg-claude-path">Claude Code executable</label><input id="cfg-claude-path" class="wide-input" placeholder="claude"></div><div><label class="field-label" for="cfg-claude-model">Claude model</label><input id="cfg-claude-model" class="wide-input" placeholder="sonnet"></div></div>
+        <p class="field-help" id="provider-help">Start Ollama and enter the name of a model you have downloaded. Your Slack content stays on your computer.</p>
+      </section>
+      <section class="setup-card" aria-labelledby="preferences-heading"><div class="step-heading"><div><h2 id="preferences-heading">Preferences</h2></div></div>
+        <div class="form-grid"><div><label class="field-label" for="cfg-summaries">Summaries folder</label><input id="cfg-summaries" class="wide-input" required><p class="field-help">Markdown text files are saved here after every run.</p></div><div><label class="field-label" for="cfg-timezone">Timezone</label><input id="cfg-timezone" class="wide-input" placeholder="America/Edmonton" required><p class="field-help">Used for your calendar and exported summaries.</p></div></div>
+        <label class="field-label spaced-label" for="cfg-keywords">Priority keywords</label><textarea id="cfg-keywords" rows="6" class="wide-input" spellcheck="false" aria-describedby="keywords-help"></textarea><p class="field-help" id="keywords-help">One per line: urgent = 5. Higher weight = higher priority. Blank = AI relevance only.</p>
+        <details class="advanced-settings"><summary>Advanced settings</summary><p class="field-help">Relative paths resolve beside your config file.</p><div id="advanced-fields" class="form-grid"></div></details>
+      </section>
+      <div id="settings-error" class="settings-error" role="alert" tabindex="-1" hidden></div>
+      <div id="settings-result" class="settings-result" role="status" hidden></div>
+      <div class="connection-actions" id="connection-actions" hidden><button type="button" id="settings-recheck" class="secondary">Recheck saved connections</button><button type="button" id="settings-continue" class="secondary">Open dashboard anyway</button></div>
+      <div class="setup-actions"><p>Saved on this computer. Changes apply immediately.</p><div><button type="button" id="settings-cancel" class="secondary" hidden>Back</button><button type="submit" id="settings-save" class="primary">Save</button></div></div>
+    </form>
+  </main>
+  <main id="dashboard" hidden>
+    <section class="intro"><h1>Dashboard</h1><button id="run" class="primary"><span aria-hidden="true">↻</span> Run now</button></section>
+    <div id="dev-banner" class="dev-banner" role="status" hidden>Developer preview · sample data only. No Slack or AI requests.<button id="dev-exit" type="button" class="secondary">Exit preview</button></div>
+    <section class="calendar" aria-label="Digest calendar"><div class="calendar-heading"><div><span id="month">Your digest archive</span><span class="muted" id="timezone"></span></div><input id="date-picker" type="date" aria-label="Jump to date"></div><div class="calendar-track"><button id="prev" class="arrow" aria-label="Previous week">←</button><div id="dates" class="dates"></div><button id="next" class="arrow" aria-label="Next week">→</button></div></section>
+    <div id="notice" role="status" aria-live="polite"></div>
+    <section class="toolbar"><div class="day-label"><h2 id="day-title">Latest digest</h2><p id="run-meta" class="muted"></p></div><div class="filters"><select id="runs" aria-label="Select run" hidden></select><select id="channels" aria-label="Filter channels"><option value="">All channels</option></select><input id="search" type="search" placeholder="Search…" aria-label="Search summaries"></div></section>
+    <section id="metrics" class="metrics" hidden></section>
+    <section id="errors" aria-label="Run errors"></section>
+    <section id="cards" class="cards" aria-label="Channel summaries"></section>
+    <section class="empty" id="empty"><h2>No summaries</h2><p>Run a digest to get started.</p><div id="readiness" class="readiness">Checking your connections…</div><button id="recheck" class="secondary">Check connections</button></section>
+    <footer><span id="provider-label"></span><span>AI summaries may be inaccurate. Check source messages.</span></footer>
+  </main>
+</body>
+</html>
